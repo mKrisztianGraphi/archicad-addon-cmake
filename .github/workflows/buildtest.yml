@@ -39,7 +39,7 @@ jobs:
           fileName: ${{ env.FILE_NAME }}
           extract: false
           out-file-path: apidevkit-release
-          token: ${{ secrets.PAT_CLASSIC }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setting ApiDevKit version
         id: setVersion
