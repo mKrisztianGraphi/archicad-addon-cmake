@@ -199,7 +199,7 @@ def Main():
                 if BuildAddOn(rootFolder, buildFolder, devKitFolder, addOnName, platformName, 'RelWithDebInfo', languageCode) != 0:
                     return 1
                 if args.package:
-                    CopyResultToPackage(packageRootFolder, buildFolder, platformName, addOnName, 'RelWithDebInfo', languageCode)
+                    CopyResultToPackage(packageRootFolder, buildFolder, addOnName, platformName, 'RelWithDebInfo', languageCode)
 
         else:
             if BuildAddOn(rootFolder, buildFolder, devKitFolder, addOnName, platformName, 'Debug') != 0:
