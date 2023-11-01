@@ -2,8 +2,7 @@ name: Release Add-On Pipeline
 
 on:
   workflow_dispatch:
-  # push:
-  #   branches: [ "separated-addon-pipelines" ]
+  push:
         
 
 defaults:
@@ -36,7 +35,7 @@ jobs:
           latest: true
           extract: false
           out-file-path: apidevkit-release
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT_CLASSIC }}
 
       - name: unzip
         run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
