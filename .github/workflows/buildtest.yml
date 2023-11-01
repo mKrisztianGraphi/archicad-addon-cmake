@@ -12,8 +12,6 @@ defaults:
 jobs:
   build:
     runs-on: ${{matrix.os-type}}
-    outputs:
-      releaseVersion: ${{ steps.setVersion.outputs.version }}
 
     strategy:
       matrix:
@@ -47,56 +45,28 @@ jobs:
         run: python test.py --acVersion "27" --language "INT" --devKitPath "${{ github.workspace }}\apidevkit-release" --package
 
       - name: list dirs
-        run: |
-          ls .
-          ls ./Build
-          ls ./Build/Package
+        run: ls .
 
+      - name: list dirs
+        run: ls ./Build
 
-  #     - name: Store artifact
-  #       uses: actions/upload-artifact@v3
-  #       with:
-  #         name: ${{ github.event.repository.name }}-${{ matrix.os-type }}-Release-localized
-  #         path: "${{ github.workspace }}/Localized-Builds/*"
-  
-  # release:
-  #   needs: build
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifacts
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         path: "${{ github.workspace }}/artifacts"
-
-  #     - name: Zip artifact contents
-  #       run: |
-  #         base_directory="${{ github.workspace }}/artifacts"
-  #         cd $base_directory
-  #         ls .
-
-  #         for subdirectory in "$base_directory"/*; do
-  #           if [ -d "$subdirectory" ]; then
-  #             subdirectory_basename=$(basename "$subdirectory")
-  #             pushd "$subdirectory"
-  #             zip -r "${subdirectory_basename}.zip" .
-  #             popd
-  #           fi        
-  #         done
+      - name: list dirs
+        run: ls ./Build/Package
           
-  #     - name: Increase tag version
-  #       uses: anothrNick/github-tag-action@1.64.0 
-  #       id: tagSet
-  #       env:
-  #         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-  #         WITH_V: false
-  #         INITIAL_VERSION: "${{ needs.build.outputs.releaseVersion }}.0"
-  #         DEFAULT_BUMP: patch
+      - name: Increase tag version
+        uses: anothrNick/github-tag-action@1.64.0 
+        id: tagSet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          WITH_V: false
+          INITIAL_VERSION: "0.0.0"
+          DEFAULT_BUMP: patch
           
-  #     - name: Create Release
-  #       uses: softprops/action-gh-release@v1
-  #       with:
-  #         tag_name: "${{ steps.tagSet.outputs.new_tag }}"
-  #         files: "${{ github.workspace }}/artifacts/*/*.zip"
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "${{ steps.tagSet.outputs.new_tag }}"
+          files: "${{ github.workspace }}/Build/Package/*.zip"
             
             
       
