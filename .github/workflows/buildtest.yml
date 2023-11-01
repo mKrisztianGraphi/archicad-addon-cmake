@@ -1,0 +1,134 @@
+name: Release Add-On Pipeline
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches: [ "separated-addon-pipelines" ]
+        
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    runs-on: ${{matrix.os-type}}
+    outputs:
+      releaseVersion: ${{ steps.setVersion.outputs.version }}
+
+    strategy:
+      matrix:
+        os-type: [ windows-2019, macos-latest ]
+      fail-fast: false
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Checkout the submodule
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      
+      - name: Download latest APIDevKit release
+        env:
+          FILE_NAME: ${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }}
+        uses: robinraju/release-downloader@v1.8
+        with:
+          repository: GRAPHISOFT/archicad-api-devkit-internal
+          latest: true
+          fileName: ${{ env.FILE_NAME }}
+          extract: false
+          out-file-path: apidevkit-release
+          token: ${{ secrets.PAT_CLASSIC }}
+
+      - name: Setting ApiDevKit version
+        id: setVersion
+        run: |
+          ls apidevkit-release/API*.zip | head -n1 | sed -n 's/.*\.\([1-9][0-9]*\.[1-9][0-9]*\)\..*/version=\1/p' >> $GITHUB_OUTPUT
+
+      - name: unzip
+        run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"          
+
+      - name: Save localization options
+        id: getlocales
+        run: |
+          language_list=()
+          while IFS= read -r language_code; do
+                trimmed_language_code=$(echo -n "$language_code" | tr -d '\r' | tr -d '\n')
+                echo $trimmed_language_code
+                language_list+=($trimmed_language_code) 
+          done < "${{ github.workspace }}/languages.config"
+          echo "language_list=(${language_list[@]})" >> $GITHUB_OUTPUT
+
+      - name: Run CMake Build solution and Build project
+        run: |
+          workspace="${{ github.workspace }}"
+          language_list=${{ steps.getlocales.outputs.language_list }}
+          if [ "${{ runner.os }}" == "Windows" ]; then
+            for language in "${language_list[@]}"; do
+              cmake -B "Build-$language" -G "Visual Studio 16 2019" -DAC_API_DEVKIT_DIR="$workspace/apidevkit-release/Support" -DCMAKE_BUILD_TYPE=Release -DAC_ADDON_LANGUAGE=$language .
+              cmake --build "$workspace/Build-$language" --config Release
+            done
+          else
+            chmod +x "$workspace/apidevkit-release/Support/Tools/OSX/ResConv"
+            for language in "${language_list[@]}"; do
+              cmake -B "Build-$language" -G "Xcode" -DAC_API_DEVKIT_DIR="$workspace/apidevkit-release/Support" -DAC_ADDON_LANGUAGE=$language .
+              cmake --build "$workspace/Build-$language" --config Release
+            done
+          fi
+          
+      - name: Prepare builds for artifact uploading
+        run: |
+          language_list=${{ steps.getlocales.outputs.language_list }}
+          for language in "${language_list[@]}"; do
+            mkdir -p "${{ github.workspace }}/Localized-Builds/Build-$element"
+            mv Build-$element/Release/*.txt Localized-Builds/Build-$element
+          done
+
+      - name: Store artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ github.event.repository.name }}-${{ matrix.os-type }}-Release-localized
+          path: "${{ github.workspace }}/Localized-Builds/*"
+  
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: "${{ github.workspace }}/artifacts"
+
+      - name: Zip artifact contents
+        run: |
+          base_directory="${{ github.workspace }}/artifacts"
+          cd $base_directory
+          ls .
+
+          for subdirectory in "$base_directory"/*; do
+            if [ -d "$subdirectory" ]; then
+              subdirectory_basename=$(basename "$subdirectory")
+              pushd "$subdirectory"
+              zip -r "${subdirectory_basename}.zip" .
+              popd
+            fi        
+          done
+          
+      - name: Increase tag version
+        uses: anothrNick/github-tag-action@1.64.0 
+        id: tagSet
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          WITH_V: false
+          INITIAL_VERSION: "${{ needs.build.outputs.releaseVersion }}.0"
+          DEFAULT_BUMP: patch
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "${{ steps.tagSet.outputs.new_tag }}"
+          files: "${{ github.workspace }}/artifacts/*/*.zip"
+            
+            
+      
