@@ -37,8 +37,13 @@ def DownloadAndUnzip (url, dest, platform):
 
 def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, configuration, languageCode=None):
 
+    print("==================")
     os.listdir(str(devKitFolder))
+    os.listdir(devKitFolder)
     os.listdir(str(devKitFolder / 'Support'))
+    for f in os.listdir(devKitFolder):
+        print(f)
+    print("==================")
     
     buildPath = buildFolder / addOnName
     if languageCode is not None:
