@@ -69,7 +69,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           tag_name: 0.0.0
-          files: "${{ github.workspace }}\Build\Package\*.zip"
+          files: "${{ github.workspace }}/Build/Package/*.zip"
             
             
       
