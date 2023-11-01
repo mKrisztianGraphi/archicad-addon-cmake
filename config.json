@@ -1,0 +1,9 @@
+{
+    "devKitLinks" : {
+        "27" : "Link-to-27",
+        "28" : "Link-to-28"
+    },
+    "languages" : [
+        "INT"
+    ]
+}
