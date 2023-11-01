@@ -39,12 +39,7 @@ jobs:
           fileName: ${{ env.FILE_NAME }}
           extract: false
           out-file-path: apidevkit-release
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Setting ApiDevKit version
-        id: setVersion
-        run: |
-          ls apidevkit-release/API*.zip | head -n1 | sed -n 's/.*\.\([1-9][0-9]*\.[1-9][0-9]*\)\..*/version=\1/p' >> $GITHUB_OUTPUT
+          token: ${{ github.token }}
 
       - name: unzip
         run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
