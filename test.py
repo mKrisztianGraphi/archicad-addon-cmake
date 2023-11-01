@@ -62,7 +62,7 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
     # Add params to build AddOn
     buildParams = []
     buildParams.append ('cmake')
-    buildParams.extend (['--build', buildPath])
+    buildParams.extend (['--build', str(buildPath)])
     buildParams.extend (['--config', configuration])
 
     buildResult = subprocess.call (buildParams)
@@ -214,8 +214,8 @@ def Main():
     if args.package:
         subprocess.call ([
             '7z', 'a',
-            packageRootFolder / (addOnName + '_' + platformName + '.zip'),
-            packageRootFolder / addOnName / '*'
+            str(packageRootFolder / (addOnName + '_' + platformName + '.zip')),
+            str(packageRootFolder / addOnName / '*')
         ])
     
     print ('Build Successful')
