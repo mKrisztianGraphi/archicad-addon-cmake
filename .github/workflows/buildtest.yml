@@ -2,7 +2,6 @@ name: Release Add-On Pipeline
 
 on:
   workflow_dispatch:
-  push:
         
 
 defaults:
@@ -15,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os-type: [ windows-2019, macos-latest ]
+        os-type: [ macos-latest ]
       fail-fast: false
 
     steps:
