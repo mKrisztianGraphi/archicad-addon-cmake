@@ -44,7 +44,7 @@ jobs:
       - name: python version
         run: python --version
       - name: run python
-        run: python3 test.py --acVersion "27" --language "INT" --devKitPath "${{ github.workspace }}\apidevkit-release" --package --release
+        run: python3 test.py --acVersion "27" --language "INT" --devKitPath "${{ github.workspace }}\apidevkit-release" --package
 
       - name: list dirs
         run: ls .
