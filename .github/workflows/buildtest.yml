@@ -39,7 +39,7 @@ jobs:
           token: ${{ secrets.PAT_CLASSIC }}
 
       - name: unzip
-        run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
+        run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}\apidevkit-release"     
 
       - name: python version
         run: python --version
