@@ -36,10 +36,9 @@ jobs:
         with:
           repository: GRAPHISOFT/archicad-api-devkit-internal
           latest: true
-          fileName: ${{ env.FILE_NAME }}
           extract: false
           out-file-path: apidevkit-release
-          token: ${{ github.token }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: unzip
         run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
