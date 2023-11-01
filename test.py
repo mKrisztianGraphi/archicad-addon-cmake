@@ -196,7 +196,7 @@ def Main():
             
         if args.release is True:
             for languageCode in languageList:
-                if BuildAddOn(rootFolder, buildFolder, devKitFolder, platformName, 'RelWithDebInfo', languageCode) != 0:
+                if BuildAddOn(rootFolder, buildFolder, devKitFolder, addOnName, platformName, 'RelWithDebInfo', languageCode) != 0:
                     return 1
                 if args.package:
                     CopyResultToPackage(packageRootFolder, buildFolder, platformName, addOnName, 'RelWithDebInfo', languageCode)
