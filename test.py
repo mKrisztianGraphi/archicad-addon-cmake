@@ -188,7 +188,7 @@ def Main():
             permissionParams = []
             permissionParams.append ('chmod')
             permissionParams.append ('+x')
-            permissionParams.append (str(devKitFolder / 'Support' / 'Tools' / 'OSX' / 'ResConf'))
+            permissionParams.append (str(devKitFolder / 'Support' / 'Tools' / 'OSX' / 'ResConv'))
             permissionResult = subprocess.call (permissionParams)
             if permissionResult != 0:
                 print ('Failed to grant permission')
