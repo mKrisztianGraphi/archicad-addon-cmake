@@ -41,7 +41,11 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
     os.listdir(str(devKitFolder))
     os.listdir(devKitFolder)
     os.listdir(str(devKitFolder / 'Support'))
+    print("==================")
     for f in os.listdir(devKitFolder):
+        print(f)
+    print("==================")
+    for f in os.listdir(devKitFolder / 'Support'):
         print(f)
     print("==================")
     
