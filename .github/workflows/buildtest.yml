@@ -41,6 +41,8 @@ jobs:
       - name: unzip
         run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
 
+      - name: python version
+        run: python --version
       - name: run python
         run: python test.py --acVersion "27" --language "INT" --devKitPath "${{ github.workspace }}\apidevkit-release" --package --release
 
