@@ -43,7 +43,7 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
     # Add params to configure cmake
     projGenParams = []
     projGenParams.append ('cmake')
-    projGenParams.extend (['-B', buildPath])
+    projGenParams.extend (['-B', str(buildPath)])
     if platformName == 'WIN':
         projGenParams.extend (['-G', 'Visual Studio 16 2019'])
     elif platformName == 'MAC':
@@ -52,7 +52,7 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
     projGenParams.append ('-DCMAKE_BUILD_TYPE=' + configuration)
     if languageCode is not None:
         projGenParams.append ('-DAC_ADDON_LANGUAGE=' + languageCode)
-    projGenParams.append (rootFolder)
+    projGenParams.append (str(rootFolder))
 
     projGenResult = subprocess.call (projGenParams)
     if projGenResult != 0:
