@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        os-type: [ windows-2019, macos-latest ]
+        os-type: [ windows-2019 ]
       fail-fast: false
 
     steps:
@@ -30,8 +30,6 @@ jobs:
           submodules: recursive
       
       - name: Download latest APIDevKit release
-        env:
-          FILE_NAME: ${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }}
         uses: robinraju/release-downloader@v1.8
         with:
           repository: GRAPHISOFT/archicad-api-devkit-internal
