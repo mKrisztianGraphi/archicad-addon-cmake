@@ -53,19 +53,19 @@ jobs:
       - name: list dirs
         run: ls ./Build/Package
           
-      - name: Increase tag version
-        uses: anothrNick/github-tag-action@1.64.0 
-        id: tagSet
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-          WITH_V: false
-          INITIAL_VERSION: "0.0.0"
-          DEFAULT_BUMP: patch
+      # - name: Increase tag version
+      #   uses: anothrNick/github-tag-action@1.64.0 
+      #   id: tagSet
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      #     WITH_V: false
+      #     INITIAL_VERSION: "0.0.0"
+      #     DEFAULT_BUMP: patch
           
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: "${{ steps.tagSet.outputs.new_tag }}"
+          tag_name: 0.0.0
           files: "${{ github.workspace }}/Build/Package/*.zip"
             
             
