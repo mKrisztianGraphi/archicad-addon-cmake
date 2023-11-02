@@ -205,9 +205,9 @@ def Main():
             permissionParams.append ('+x')
             permissionParams.append (str(devKitFolder / 'Support' / 'Tools' / 'OSX' / 'ResConv'))
             permissionResult = subprocess.call (permissionParams)
-            # if permissionResult != 0:
-            #     print ('Failed to grant permission')
-            #     return 1
+            if permissionResult != 0:
+                print ('Failed to grant permission')
+                return 1
             
         if args.release is True:
             for languageCode in languageList:
