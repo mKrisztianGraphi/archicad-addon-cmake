@@ -14,7 +14,7 @@ jobs:
 
     strategy:
       matrix:
-        os-type: [ macos-latest ]
+        os-type: [ windows-2019, macos-latest ]
       fail-fast: false
 
     steps:
