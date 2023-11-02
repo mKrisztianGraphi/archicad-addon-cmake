@@ -40,6 +40,20 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
     if languageCode is not None:
         buildPath = buildPath / languageCode
 
+    print("buildPath", buildPath)
+    print("devKitFolder", devKitFolder)
+    print("devKitFolder/Support", devKitFolder / 'Support')
+    os.chdir(devKitFolder / 'Support')
+    print(pathlib.Path().absolute())
+
+    print("==================")
+    for f in os.listdir(devKitFolder):
+        print(f)
+    print("==================")
+    for f in os.listdir(devKitFolder / 'Support'):
+        print(f)
+    print("==================")
+
     # Add params to configure cmake
     projGenParams = []
     projGenParams.append ('cmake')
