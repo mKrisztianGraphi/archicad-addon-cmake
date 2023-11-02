@@ -36,29 +36,9 @@ def DownloadAndUnzip (url, dest, platform):
         ])
 
 def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, configuration, languageCode=None):
-
-    print("==================")
-    os.listdir(str(devKitFolder))
-    os.listdir(devKitFolder)
-    os.listdir(str(devKitFolder / 'Support'))
-    print("==================")
-    for f in os.listdir(devKitFolder):
-        print(f)
-    print("==================")
-    for f in os.listdir(devKitFolder / 'Support'):
-        print(f)
-    print("==================")
-    
     buildPath = buildFolder / addOnName
     if languageCode is not None:
-        buildPath = buildFolder / addOnName / languageCode
-
-    print("buildPath", buildPath)
-    print("devKitFolder", devKitFolder)
-    print("devKitFolder/Support", devKitFolder / 'Support')
-    os.chdir(devKitFolder / 'Support')
-    print(pathlib.Path().absolute())
-
+        buildPath = buildPath / languageCode
 
     # Add params to configure cmake
     projGenParams = []
@@ -94,11 +74,12 @@ def BuildAddOn (rootFolder, buildFolder, devKitFolder, addOnName, platformName, 
 
 def CopyResultToPackage(packageRootFolder, buildFolder, addOnName, platformName, configuration, languageCode=None):
     packageFolder = packageRootFolder / addOnName
-    sourceFolder = buildFolder / addOnName / configuration
+    sourceFolder = buildFolder / addOnName
 
     if languageCode is not None:
-        packageFolder = packageRootFolder / addOnName / languageCode
-        sourceFolder = buildFolder / addOnName / languageCode / configuration
+        packageFolder = packageFolder / languageCode
+        sourceFolder = sourceFolder / languageCode
+    sourceFolder = sourceFolder / configuration
 
     if not packageFolder.exists():
         packageFolder.mkdir(parents=True)
@@ -106,19 +87,19 @@ def CopyResultToPackage(packageRootFolder, buildFolder, addOnName, platformName,
     if platformName == 'WIN':
         shutil.copy (
             sourceFolder / (addOnName + '.apx'),
-            packageFolder / (addOnName + '.apx')
+            packageFolder / (addOnName + '_' + configuration + '.apx')
         )
         if configuration == 'Debug':
             shutil.copy (
                 sourceFolder / (addOnName + '.pdb'),
-                packageFolder / (addOnName + '.pdb')
+                packageFolder / (addOnName + '_' + configuration + '.pdb')
             )
 
     elif platformName == 'MAC':
         subprocess.call ([
             'cp', '-r',
             sourceFolder / (addOnName + '.bundle'),
-            packageFolder / (addOnName + '.bundle')
+            packageFolder / (addOnName + '_' + configuration + '.bundle')
         ])
     
 
@@ -168,9 +149,9 @@ def Main():
         buildFolder.mkdir(parents=True)
 
     packageRootFolder = buildFolder / 'Package'
-    if args.package:
-        if packageRootFolder.exists():
-            shutil.rmtree (packageRootFolder)
+    # if args.package:
+        # if packageRootFolder.exists():
+        #     shutil.rmtree (packageRootFolder)
 
     # Set APIDevKit directory if local is used, else create new directories
     devKitFolderList = {}
@@ -232,9 +213,10 @@ def Main():
 
     # Zip packages
     if args.package:
+        release = 'Release' if args.release else 'Daily'
         subprocess.call ([
             '7z', 'a',
-            str(packageRootFolder / (addOnName + '_' + platformName + '.zip')),
+            str(packageRootFolder / (addOnName + '_' + release + '_' + platformName + '.zip')),
             str(packageRootFolder / addOnName / '*')
         ])
     
