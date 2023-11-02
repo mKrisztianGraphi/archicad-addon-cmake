@@ -38,7 +38,7 @@ jobs:
           token: ${{ secrets.PAT_CLASSIC }}
 
       - name: unzip
-        run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}\apidevkit-release"     
+        run: unzip apidevkit-release/${{ runner.os == 'Windows' && '*WIN*.zip' || '*MAC*.zip' }} -d "${{ github.workspace }}/apidevkit-release"     
 
       - name: run python
         run: python3 test.py --acVersion "27" --language "INT" --devKitPath "${{ github.workspace }}/apidevkit-release" --package
